@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">AudioActivatedApp</string>
+    <string name="notification_channel_id">com.andrewshulgin.audioactivatedwebapp.persistent</string>
+    <string name="notification_channel_title">Persistent Notifications</string>
+    <string name="notification_channel_description">Persistent Notifications</string>
+    <string name="notification_title">Audio Service</string>
+    <string name="running">Running</string>
+    <string name="preference_file_key">com.andrewshulgin.audioactivatedwebapp.preferences</string>
+    <string name="default_url">https://k37.kyiv.ua/elevator-ui/</string>
+</resources>
