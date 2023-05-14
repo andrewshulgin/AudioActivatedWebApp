@@ -27,7 +27,6 @@ class AudioWorker(context: Context, parameters: WorkerParameters) :
         private const val SAMPLE_RATE = 8000
         private const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
         private const val ENCODING = AudioFormat.ENCODING_PCM_16BIT
-        private const val WAKE_RMS_VALUE = 1000
         private const val NOTIFICATION_ID = 1337
     }
 
@@ -38,10 +37,13 @@ class AudioWorker(context: Context, parameters: WorkerParameters) :
 
     private var rms = 0
     private var peak = 0
+    private var wakeRms = 1000
 
     override suspend fun doWork(): Result {
         val id = applicationContext.getString(R.string.notification_channel_id)
         val title = applicationContext.getString(R.string.notification_title)
+
+        wakeRms = inputData.getInt("wake_rms", 1000)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel()
@@ -73,7 +75,7 @@ class AudioWorker(context: Context, parameters: WorkerParameters) :
             while (recordingInProgress.get()) {
                 val result = recorder!!.read(buffer, 0, bufferSize)
                 calcRms(buffer, result)
-                if (rms > WAKE_RMS_VALUE) {
+                if (rms > wakeRms) {
                     val dialogIntent = Intent(applicationContext, MainActivity::class.java)
                     dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     applicationContext.startActivity(dialogIntent)

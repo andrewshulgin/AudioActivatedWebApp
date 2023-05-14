@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
@@ -80,13 +81,16 @@ class MainActivity : ComponentActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
-        val audioWorkRequest: WorkRequest = OneTimeWorkRequestBuilder<AudioWorker>().build()
+        val audioWorkerParams = Data.Builder()
+        audioWorkerParams.putInt("wake_rms", sharedPref!!.getInt("wake_rms", 1000))
+        val audioWorkRequest = OneTimeWorkRequestBuilder<AudioWorker>()
+        audioWorkRequest.setInputData(audioWorkerParams.build())
 
         val requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted ->
             if (isGranted) {
-                WorkManager.getInstance(this).enqueue(audioWorkRequest)
+                WorkManager.getInstance(this).enqueue(audioWorkRequest.build())
             }
         }
         requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
