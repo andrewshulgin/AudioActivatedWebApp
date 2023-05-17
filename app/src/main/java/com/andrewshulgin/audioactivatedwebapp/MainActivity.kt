@@ -81,9 +81,11 @@ class MainActivity : ComponentActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
+        WorkManager.getInstance(this).cancelAllWorkByTag("AudioWorker");
         val audioWorkerParams = Data.Builder()
         audioWorkerParams.putInt("wake_rms", sharedPref!!.getInt("wake_rms", 1000))
         val audioWorkRequest = OneTimeWorkRequestBuilder<AudioWorker>()
+        audioWorkRequest.addTag("AudioWorker")
         audioWorkRequest.setInputData(audioWorkerParams.build())
 
         val requestPermissionLauncher = registerForActivityResult(
