@@ -8,6 +8,7 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
@@ -37,13 +38,17 @@ class AudioWorker(context: Context, parameters: WorkerParameters) :
 
     private var rms = 0
     private var peak = 0
-    private var wakeRms = 1000
+    private var wakeRms = -1
+    private var wakePeak = -1
+    private var debugRms = false
 
     override suspend fun doWork(): Result {
         val id = applicationContext.getString(R.string.notification_channel_id)
         val title = applicationContext.getString(R.string.notification_title)
 
         wakeRms = inputData.getInt("wake_rms", 1000)
+        wakePeak = inputData.getInt("wake_peak", -1)
+        debugRms = inputData.getBoolean("debug_rms", false)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel()
@@ -75,10 +80,16 @@ class AudioWorker(context: Context, parameters: WorkerParameters) :
             while (recordingInProgress.get()) {
                 val result = recorder!!.read(buffer, 0, bufferSize)
                 calcRms(buffer, result)
-                if (rms > wakeRms) {
-                    val dialogIntent = Intent(applicationContext, MainActivity::class.java)
-                    dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    applicationContext.startActivity(dialogIntent)
+                if (debugRms) {
+                    Log.d("RMS", String.format(
+                        "rms=%d peak=%d wake_rms=%d wake_peak=%d",
+                        rms, peak, wakeRms, wakePeak
+                    ))
+                }
+                if ((wakeRms in 0 until rms) || (wakePeak in 0 until peak)) {
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    applicationContext.startActivity(intent)
                 }
             }
         } catch (e: SecurityException) {

@@ -58,6 +58,16 @@ class MainActivity : ComponentActivity() {
             } else if (!sharedPref!!.contains("wake_rms")) {
                 putInt("wake_rms", 1000)
             }
+            if (intent.hasExtra("wake_peak")) {
+                putInt("wake_peak", intent.getIntExtra("wake_peak", -1))
+            } else if (!sharedPref!!.contains("wake_peak")) {
+                putInt("wake_peak", -1)
+            }
+            if (intent.hasExtra("debug_rms")) {
+                putBoolean("debug_rms", intent.getBooleanExtra("debug_rms", false))
+            } else if (!sharedPref!!.contains("debug_rms")) {
+                putBoolean("debug_rms", false)
+            }
             if (intent.hasExtra("wake_timeout")) {
                 putLong("wake_timeout", intent.getLongExtra("wake_timeout", 10))
             } else if (!sharedPref!!.contains("wake_timeout")) {
@@ -84,6 +94,8 @@ class MainActivity : ComponentActivity() {
         WorkManager.getInstance(this).cancelAllWorkByTag("AudioWorker");
         val audioWorkerParams = Data.Builder()
         audioWorkerParams.putInt("wake_rms", sharedPref!!.getInt("wake_rms", 1000))
+        audioWorkerParams.putInt("wake_peak", sharedPref!!.getInt("wake_peak", -1))
+        audioWorkerParams.putBoolean("debug_rms", sharedPref!!.getBoolean("debug_rms", false))
         val audioWorkRequest = OneTimeWorkRequestBuilder<AudioWorker>()
         audioWorkRequest.addTag("AudioWorker")
         audioWorkRequest.setInputData(audioWorkerParams.build())
