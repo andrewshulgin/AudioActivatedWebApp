@@ -21,11 +21,23 @@ class StableWebViewClient(private val url: String) : WebViewClient() {
     override fun onReceivedError(
         view: WebView?, req: WebResourceRequest, rerr: WebResourceError
     ) {
-        super.onReceivedError(view, req, rerr)
-        view?.loadData("", "text/plain", "utf-8")
-        Handler(Looper.getMainLooper()).postDelayed(
-            { view?.loadUrl(url) }, 2000
-        )
+        if (req.isForMainFrame) {
+            val offlinePage = view?.context?.resources?.openRawResource(R.raw.offline)
+            if (offlinePage != null) {
+                view.loadDataWithBaseURL(
+                    "file:///android_asset/",
+                    String(offlinePage.readBytes()),
+                    "text/html",
+                    "utf-8",
+                    null
+                )
+            } else {
+                super.onReceivedError(view, req, rerr)
+            }
+            Handler(Looper.getMainLooper()).postDelayed(
+                { view?.loadUrl(url) }, 2000
+            )
+        }
     }
 
     override fun onReceivedHttpError(
