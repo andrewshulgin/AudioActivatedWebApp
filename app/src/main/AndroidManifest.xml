@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AudioActivatedApp"
+        android:theme="@style/Theme.AudioActivatedWebApp"
         tools:targetApi="31">
 
         <activity
@@ -25,7 +25,7 @@
             android:showWhenLocked="true"
             android:turnScreenOn="true"
             android:launchMode="singleTask"
-            android:theme="@style/Theme.AudioActivatedApp">
+            android:theme="@style/Theme.AudioActivatedWebApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

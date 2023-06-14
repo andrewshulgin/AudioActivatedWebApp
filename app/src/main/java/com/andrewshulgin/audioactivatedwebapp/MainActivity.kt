@@ -114,7 +114,7 @@ class MainActivity : ComponentActivity() {
         initialize()
     }
 
-    fun initialize() {
+    private fun initialize() {
         sleepHandler?.removeCallbacksAndMessages(null)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.setFlags(
@@ -131,10 +131,10 @@ class MainActivity : ComponentActivity() {
                 object : KeyguardManager.KeyguardDismissCallback() {})
             setTurnScreenOn(true)
             setShowWhenLocked(true)
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         } else {
             window.addFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN or
-                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
                         WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
                         WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
@@ -151,17 +151,6 @@ class MainActivity : ComponentActivity() {
         }, sharedPref!!.getLong("wake_timeout", 10) * 1000)
     }
 
-
-    fun isExternalPowerConnected(): Boolean {
-        val intent = applicationContext.registerReceiver(
-            null,
-            IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-        )
-        val plugged = intent!!.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
-        return plugged == BatteryManager.BATTERY_PLUGGED_AC ||
-                plugged == BatteryManager.BATTERY_PLUGGED_USB
-    }
-
     override fun onResume() {
         super.onResume()
         initialize()
@@ -170,7 +159,6 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     @Composable
     private fun MainWebView() {
-        val activity = this
         val url = sharedPref!!.getString("url", "about:blank")
         AndroidView(factory = {
             WebView(it).apply {
@@ -179,7 +167,6 @@ class MainActivity : ComponentActivity() {
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
                 )
-                addJavascriptInterface(WebAppInterface(activity), "Android")
                 webViewClient = StableWebViewClient(url!!)
                 loadUrl(url)
             }

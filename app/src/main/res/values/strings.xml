@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AudioActivatedApp</string>
+    <string name="app_name">AudioActivatedWebApp</string>
     <string name="notification_channel_id">com.andrewshulgin.audioactivatedwebapp.persistent</string>
     <string name="notification_channel_title">Persistent Notifications</string>
     <string name="notification_channel_description">Persistent Notifications</string>
