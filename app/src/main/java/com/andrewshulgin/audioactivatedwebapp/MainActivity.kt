@@ -3,13 +3,10 @@ package com.andrewshulgin.audioactivatedwebapp
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.KeyguardManager
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.net.wifi.WifiManager
-import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -120,8 +117,7 @@ class MainActivity : ComponentActivity() {
         window.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-
-            )
+        )
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
         windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
         windowInsetsController.hide(WindowInsetsCompat.Type.navigationBars())
