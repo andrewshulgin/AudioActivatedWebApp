@@ -6,5 +6,5 @@
     <string name="notification_title">Audio Service</string>
     <string name="running">Running</string>
     <string name="preference_file_key">com.andrewshulgin.audioactivatedwebapp.preferences</string>
-    <string name="default_url">https://k37.kyiv.ua/elevator-ui/</string>
+    <string name="default_url">https://lifts.ya6.pp.ua/</string>
 </resources>
