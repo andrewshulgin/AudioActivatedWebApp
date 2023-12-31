@@ -159,6 +159,7 @@ class MainActivity : ComponentActivity() {
         AndroidView(factory = {
             WebView(it).apply {
                 settings.javaScriptEnabled = true
+                settings.mediaPlaybackRequiresUserGesture = false
                 setBackgroundColor(Color.BLACK)
                 layoutParams = ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
