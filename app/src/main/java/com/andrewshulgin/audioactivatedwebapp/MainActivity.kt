@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
     private var wakeLock: PowerManager.WakeLock? = null
     private var sharedPref: SharedPreferences? = null
     private var sleepHandler: Handler? = null
+    private var webView: WebView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +88,7 @@ class MainActivity : ComponentActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
-        WorkManager.getInstance(this).cancelAllWorkByTag("AudioWorker");
+        WorkManager.getInstance(this).cancelAllWorkByTag("AudioWorker")
         val audioWorkerParams = Data.Builder()
         audioWorkerParams.putInt("wake_rms", sharedPref!!.getInt("wake_rms", 1000))
         audioWorkerParams.putInt("wake_peak", sharedPref!!.getInt("wake_peak", -1))
@@ -137,6 +138,7 @@ class MainActivity : ComponentActivity() {
             )
         }
         wakeLock?.acquire(sharedPref!!.getLong("wake_timeout", 10) * 1000)
+        webView?.evaluateJavascript("typeof play === 'function' && play()", null)
 
         sleepHandler = Handler(Looper.getMainLooper())
         sleepHandler?.postDelayed({
@@ -144,6 +146,7 @@ class MainActivity : ComponentActivity() {
                 wakeLock?.release()
             }
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            webView?.evaluateJavascript("typeof pause === 'function' && pause()", null)
         }, sharedPref!!.getLong("wake_timeout", 10) * 1000)
     }
 
@@ -159,6 +162,7 @@ class MainActivity : ComponentActivity() {
         AndroidView(factory = {
             WebView(it).apply {
                 settings.javaScriptEnabled = true
+                settings.domStorageEnabled = true
                 settings.mediaPlaybackRequiresUserGesture = false
                 setBackgroundColor(Color.BLACK)
                 layoutParams = ViewGroup.LayoutParams(
@@ -166,6 +170,7 @@ class MainActivity : ComponentActivity() {
                 )
                 webViewClient = StableWebViewClient(url!!)
                 loadUrl(url)
+                webView = this
             }
         }, update = {
             it.loadUrl(url!!)
