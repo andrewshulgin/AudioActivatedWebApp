@@ -70,9 +70,9 @@ class MainActivity : Activity() {
                 putBoolean("debug_rms", false)
             }
             if (intent.hasExtra("wake_timeout")) {
-                putLong("wake_timeout", intent.getLongExtra("wake_timeout", 10))
+                putLong("wake_timeout", intent.getLongExtra("wake_timeout", 10L))
             } else if (!sharedPref!!.contains("wake_timeout")) {
-                putLong("wake_timeout", 10)
+                putLong("wake_timeout", 10L)
             }
             apply()
         }
